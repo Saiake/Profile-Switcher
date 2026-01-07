@@ -1,7 +1,9 @@
 try {
-    const context = await waitForSillyTavern();
+    // Получаем контекст SillyTavern новым способом
+    const context = getContext();
     console.log('>>> SWITCHER: Ядро получено, регистрируем команду...');
 
+    // Извлекаем необходимые инструменты из контекста
     const { SlashCommandParser, SlashCommand } = context.slashCommand;
 
     const switchProfileCommand = SlashCommand.fromProps({
@@ -28,6 +30,7 @@ try {
         helpString: 'Переключает на указанный профиль. Пример: /switch 2',
     });
 
+    // Регистрируем команду
     SlashCommandParser.addCommandObject(switchProfileCommand);
     console.log('>>> SWITCHER: Команда /switch успешно зарегистрирована! (Ищите её в чате)');
     toastr.info('Profile Switcher готов к работе');
