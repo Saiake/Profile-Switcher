@@ -17,21 +17,12 @@ eventSource.on(event_types.APP_READY, () => {
                     return;
                 }
 
-                // Получаем CSRF-токен из мета-тега страницы
-                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-
-                if (!csrfToken) {
-                    toastr.error('Не найден CSRF-токен! Перезагрузите страницу.');
-                    return;
-                }
+                const headers = getRequestHeaders();
 
                 try {
                     const response = await fetch('/api/extensions/profile-switcher/switch', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-Token': csrfToken
-                        },
+                        headers: headers,
                         body: JSON.stringify({ profile: args })
                     });
 
