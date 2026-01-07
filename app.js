@@ -1,6 +1,6 @@
 import { SlashCommand } from '../../../slash-commands/SlashCommand.js';
 import { SlashCommandParser } from '../../../slash-commands/SlashCommandParser.js';
-import { ARGUMENT_TYPE } from '../../../slash-commands/SlashCommandArgumentType.js';
+import { ARGUMENT_TYPE } from '../../../slash-commands/SlashCommandConstants.js';
 
 const { eventSource, event_types } = SillyTavern.getContext();
 
