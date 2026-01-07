@@ -1,0 +1,8 @@
+{
+    "name": "Profile Switcher",
+    "display_name": "Profile Switcher",
+    "version": "1.0.0",
+    "author": "saiake",
+    "description": "Adds a /switch command to switch profiles.",
+    "script": "script.js"
+}
