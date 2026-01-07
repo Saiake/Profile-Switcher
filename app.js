@@ -1,6 +1,5 @@
 import { SlashCommand } from '../../../slash-commands/SlashCommand.js';
 import { SlashCommandParser } from '../../../slash-commands/SlashCommandParser.js';
-import { ARGUMENT_TYPE } from '../../../slash-commands/SlashCommandConstants.js';
 
 const { eventSource, event_types } = SillyTavern.getContext();
 
@@ -26,13 +25,6 @@ eventSource.on(event_types.APP_READY, () => {
                     toastr.error('Ошибка соединения: ' + e.message);
                 }
             },
-            unnamedArgumentList: [
-                {
-                    description: 'номер профиля',
-                    typeList: [ARGUMENT_TYPE.NUMBER],
-                    isRequired: true,
-                },
-            ],
             helpString: 'Переключает на указанный профиль. Пример: /switch 2',
         });
 
