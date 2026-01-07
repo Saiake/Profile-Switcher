@@ -4,5 +4,5 @@
     "version": "1.0.0",
     "author": "saiake",
     "description": "Adds a /switch command to switch profiles.",
-    "script": "script.js"
+    "script": "app.js"
 }
