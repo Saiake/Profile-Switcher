@@ -17,7 +17,7 @@ eventSource.on(event_types.APP_READY, () => {
                     return;
                 }
 
-                jQuery.post('/api/extensions/profile-switcher/switch', {
+                jQuery.post('/api/plugins/profile-switcher/switch', {
                     profile: args
                 })
                 .done((data) => {
