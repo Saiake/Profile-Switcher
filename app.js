@@ -5,33 +5,44 @@ const { eventSource, event_types } = SillyTavern.getContext();
 
 eventSource.on(event_types.APP_READY, () => {
     try {
-        console.log('>>> SWITCHER: Регистрируем команду...');
+        console.log('>>> PROFILE SWITCHER: Регистрируем команду...');
 
         const switchProfileCommand = SlashCommand.fromProps({
             name: 'switch',
             callback: async (namedArgs, unnamedArgs) => {
                 const args = unnamedArgs.trim();
-                if (!args) {
+
+                if (!args || isNaN(args)) {
                     toastr.warning('Укажите номер профиля! Пример: /switch 2');
                     return;
                 }
-                const url = `http://${window.location.hostname}:9000/hooks/switch?id=${args}`;
-                console.log('>>> SWITCHER: Отправляем запрос на', url);
+
                 try {
-                    await fetch(url);
-                    toastr.success('Переключаюсь на профиль ' + args);
+                    const response = await fetch('/api/extensions/profile-switcher/switch', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ profile: args })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        toastr.success(data.message || `Переключаюсь на профиль ${args}`);
+                    } else {
+                        toastr.error(data.error || 'Ошибка переключения');
+                    }
                 } catch (e) {
-                    console.error('>>> SWITCHER: Ошибка сети:', e);
+                    console.error('>>> PROFILE SWITCHER: Ошибка:', e);
                     toastr.error('Ошибка соединения: ' + e.message);
                 }
             },
-            helpString: 'Переключает на указанный профиль. Пример: /switch 2',
+            helpString: 'Переключает на указанный профиль Gemini. Пример: /switch 2',
         });
 
         SlashCommandParser.addCommandObject(switchProfileCommand);
-        console.log('>>> SWITCHER: Команда /switch успешно зарегистрирована! (Ищите её в чате)');
+        console.log('>>> PROFILE SWITCHER: Команда /switch зарегистрирована!');
         toastr.info('Profile Switcher готов к работе');
     } catch (e) {
-        console.error('>>> SWITCHER: КРИТИЧЕСКАЯ ОШИБКА:', e);
+        console.error('>>> PROFILE SWITCHER: КРИТИЧЕСКАЯ ОШИБКА:', e);
     }
 });
