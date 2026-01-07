@@ -15,7 +15,7 @@ eventSource.on(event_types.APP_READY, () => {
                     toastr.warning('Укажите номер профиля! Пример: /switch 2');
                     return;
                 }
-                const url = `http://gemini-switcher:9000/hooks/switch?id=${args}`;
+                const url = `http://${window.location.hostname}:9000/hooks/switch?id=${args}`;
                 console.log('>>> SWITCHER: Отправляем запрос на', url);
                 try {
                     await fetch(url);
