@@ -1,48 +1,38 @@
-import { SlashCommand } from '../../../slash-commands/SlashCommand.js';
-import { SlashCommandParser } from '../../../slash-commands/SlashCommandParser.js';
+callback: async (namedArgs, unnamedArgs) => {
+    const args = unnamedArgs.trim();
 
-const { eventSource, event_types } = SillyTavern.getContext();
+    if (!args || isNaN(args)) {
+        toastr.warning('Укажите номер профиля! Пример: /switch 2');
+        return;
+    }
 
-eventSource.on(event_types.APP_READY, () => {
+    // Получаем CSRF-токен из мета-тега (он всегда есть в HTML SillyTavern)
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    if (!csrfToken) {
+        toastr.error('CSRF-токен не найден!');
+        return;
+    }
+
     try {
-        console.log('>>> PROFILE SWITCHER: Регистрируем команду...');
-
-        const switchProfileCommand = SlashCommand.fromProps({
-            name: 'switch',
-            callback: async (namedArgs, unnamedArgs) => {
-                const args = unnamedArgs.trim();
-
-                if (!args || isNaN(args)) {
-                    toastr.warning('Укажите номер профиля! Пример: /switch 2');
-                    return;
-                }
-
-                try {
-                    const response = await fetch('/api/extensions/profile-switcher/switch', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ profile: args })
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        toastr.success(data.message || `Переключаюсь на профиль ${args}`);
-                    } else {
-                        toastr.error(data.error || 'Ошибка переключения');
-                    }
-                } catch (e) {
-                    console.error('>>> PROFILE SWITCHER: Ошибка:', e);
-                    toastr.error('Ошибка соединения: ' + e.message);
-                }
+        const response = await fetch('/api/extensions/profile-switcher/switch', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
             },
-            helpString: 'Переключает на указанный профиль Gemini. Пример: /switch 2',
+            body: JSON.stringify({ profile: args })
         });
 
-        SlashCommandParser.addCommandObject(switchProfileCommand);
-        console.log('>>> PROFILE SWITCHER: Команда /switch зарегистрирована!');
-        toastr.info('Profile Switcher готов к работе');
+        const data = await response.json();
+
+        if (response.ok) {
+            toastr.success(data.message || `Переключено на профиль ${args}`);
+        } else {
+            toastr.error(data.error || 'Ошибка переключения');
+        }
     } catch (e) {
-        console.error('>>> PROFILE SWITCHER: КРИТИЧЕСКАЯ ОШИБКА:', e);
+        console.error('>>> PROFILE SWITCHER: Ошибка:', e);
+        toastr.error('Ошибка соединения: ' + e.message);
     }
-});
+},
