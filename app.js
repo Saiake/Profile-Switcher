@@ -1,5 +1,6 @@
 import { SlashCommand } from '../../../slash-commands/SlashCommand.js';
 import { SlashCommandParser } from '../../../slash-commands/SlashCommandParser.js';
+import { ARGUMENT_TYPE } from '../../../slash-commands/SlashCommandArgumentType.js';
 
 const { eventSource, event_types } = SillyTavern.getContext();
 
@@ -10,7 +11,7 @@ eventSource.on(event_types.APP_READY, () => {
         const switchProfileCommand = SlashCommand.fromProps({
             name: 'switch',
             callback: async (namedArgs, unnamedArgs) => {
-                const args = unnamedArgs.join(' ').trim();
+                const args = unnamedArgs.trim();
                 if (!args) {
                     toastr.warning('Укажите номер профиля! Пример: /switch 2');
                     return;
@@ -25,6 +26,13 @@ eventSource.on(event_types.APP_READY, () => {
                     toastr.error('Ошибка соединения: ' + e.message);
                 }
             },
+            unnamedArgumentList: [
+                {
+                    description: 'номер профиля',
+                    typeList: [ARGUMENT_TYPE.NUMBER],
+                    isRequired: true,
+                },
+            ],
             helpString: 'Переключает на указанный профиль. Пример: /switch 2',
         });
 
